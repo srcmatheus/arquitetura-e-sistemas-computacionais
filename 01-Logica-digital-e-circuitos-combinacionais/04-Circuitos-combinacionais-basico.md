@@ -309,3 +309,80 @@ $$B_{out} = (\bar{A} \cdot B) + (\overline{(A \oplus B)} \cdot B_{in})$$
 </table>
 
 > **Fique atento à ordem na hora de conferir a tabela:** Na linha 2, temos $A=0$, $B=0$ e $B_{in}=1$. A conta realizada é $(A - B) - B_{in}$. Portanto: $(0 - 0) - 1 = -1$. Em binário de 1 bit, o valor $-1$ é representado com a Diferença ($D$) em `1` e o Empréstimo ($B_{out}$) em `1` (indicando que foi necessário pedir um bit de peso 2 emprestado para a coluna da esquerda).
+
+---
+
+## Codificadores
+
+Codificadores são circuitos lógicos combinacionais que possuem até $2^n$ linhas de entrada e $n$ linhas de saída. São responsáveis por converter um sinal ativo em uma de suas entradas no código binário correspondente em suas saídas.
+
+Existem diversos tipos de codificadores, mas, independentemente do modelo, a função fundamental de qualquer codificador digital é receber múltiplos sinais de entrada e compactá-los em um código binário menor e padronizado que possa ser interpretado pelo processador.
+
+Os codificadores estão presentes em diversas partes de um computador, principalmente em circuitos integrados na placa-mãe ou dentro do próprio processador. Os locais mais comuns onde são encontrados incluem:
+
+* Periféricos de entrada;
+* Unidade Lógica e Aritmética (ULA / ALU);
+* Sistemas de comunicação e conversão de dados.
+
+Antes de citarmos os diferentes tipos de codificadores, veja um exemplo simplificado para ilustrar seu funcionamento:
+
+Imagine um teclado fictício com 104 teclas, no qual cada tecla possui um fio conectado diretamente a uma das entradas do codificador (resultando em 104 linhas de entrada). 
+
+Supondo que as 10 primeiras teclas correspondam aos números de 0 a 9, se o usuário pressionar a tecla número 1, apenas a linha referente a essa tecla ficará com sinal elétrico ativo (`1`), enquanto todas as outras permanecerão inativas (`0`).
+
+Para que as saídas do codificador consigam representar todas as 104 entradas possíveis, a saída precisa ter pelo menos 7 bits, permitindo até $2^7 = 128$ combinações diferentes. Assim, o sinal recebido na entrada ativa é comprimido e convertido para a representação binária do número 1, que em 7 bits é $0000001$.
+
+>**Nota:** Quando você pressiona uma tecla em um teclado real, ele não envia diretamente um caractere, mas sim a posição física daquela tecla, conhecida como *Scan Code*. O sistema operacional é o responsável por interpretar esse endereço e traduzi-lo na letra ou símbolo correspondente, com base no layout configurado.
+
+>**Nota:** É importante ressaltar que, teclados reais utilizam uma matriz de teclas (varredura de linhas e colunas) controlada por um microcontrolador, evitando a necessidade de utilizar 104 condutores individuais. O exemplo acima é só uma forma de simplificar a explicação.
+
+Veja a representação de um Codificador:
+
+<img src="./imgs/encoder.png" style="display: block; margin: 0 auto; width: 500px;">
+
+---
+
+É importante destacar também os dois modos fundamentais de transmissão de dados:
+
+* **Transmissão paralela:** O codificador disponibiliza todos os bits de saída ao mesmo tempo através de múltiplas vias (por exemplo, 8 linhas de saída). A desvantagem é a necessidade de um barramento físico com mais fios conectados à placa-mãe.
+* **Transmissão em série:** Os bits gerados em paralelo pelo codificador são capturados por um circuito interno (como um registrador de deslocamento ou chip serializador) e colocados em uma fila. Em seguida, esse circuito envia os bits de forma sequencial, um por um, utilizando um único fio de sinal (como ocorre nos cabos USB).
+
+Os principais tipos de codificadores são:
+
+* **Codificador binário simples ($2^n \to n$):** Modelo padrão utilizado em circuitos onde apenas uma linha de entrada é acionada por vez, como em seletores manuais ou chaves simples.
+* **Codificador de prioridade:** Evolução do modelo simples que resolve conflitos do mundo real. Caso duas ou mais entradas sejam acionadas simultaneamente, o circuito codifica apenas a entrada que possui a maior prioridade.
+* **Codificador BCD (Decimal Codificado em Binário):** Tipo específico que converte 10 entradas decimais (dígitos de 0 a 9) em um código binário BCD de 4 bits.
+* **Serializador (Codificador Paralelo-Série):** Circuito que recebe um dado binário fornecido em paralelo e o reorganiza em uma sequência contínua de bits para transmissão através de um único condutor.
+
+---
+
+## Decodificadores
+
+Como vimos anteriormente, enquanto os codificadores recebem informações dispersas e as comprimem em um código binário compacto, o decodificador faz o caminho oposto: ele recebe o código binário compacto e o traduz (ou "descomprime") para acionar um componente específico no mundo físico ou dentro do próprio processador.
+
+Trata-se também de um circuito combinacional essencial, cuja função principal é converter informações codificadas de um formato binário de $n$ linhas de entrada para até $2^n$ linhas de saída.
+
+Considerando o exemplo simplificado do teclado, o decodificador opera de forma inversamente proporcional: a CPU envia os bits codificados e, ao recebê-los, o decodificador ativa exatamente o fio correspondente àquela tecla. Em outras palavras, enquanto o codificador opera na relação "de muitos para poucos", o decodificador atua "de poucos para muitos".
+
+Os decodificadores são comuns:
+
+* **Dentro do Processador:** Suponha que um programa de calculadora envie uma instrução para a CPU com o binário `01001100` (que representa a operação de SOMAR). Esse código entra no **Decodificador de Instruções** da CPU que, ao interpretá-lo, ativa eletricamente apenas o circuito interno responsável pela soma (a ULA / ALU), mantendo desligados os circuitos de multiplicação, divisão, entre outros.
+* **Na Memória RAM:** O **Decodificador de Endereço** (*address decoder*) é utilizado quando a CPU precisa ler um espaço na memória RAM. A CPU envia o endereço desejado através do barramento de endereços; o decodificador lê esse código e ativa unicamente a célula de memória correspondente a esse endereço.
+
+Veja a representação de um Codificador:
+
+<img src="./imgs/decoder.png" style="display: block; margin: 0 auto; width: 500px;">
+
+---
+
+Para fixar ambos os conceitos de maneira simples:
+
+* **Codificador:** Transforma um sinal físico (vindo de um periférico ou do próprio hardware) em um código compacto de bits que a CPU compreende.
+* **Decodificador:** Transforma o código binário enviado pela CPU em um sinal elétrico direto, com a finalidade de executar uma instrução, selecionar um espaço na memória RAM ou acender um LED/display específico.
+
+Principais Tipos de Decodificadores:
+
+* **Decodificador Binário Simples ($n \to 2^n$):** Executa o processo inverso ao codificador simples. É utilizado no roteamento básico de sinais e na seleção de circuitos lógicos, onde uma combinação binária ativa um componente específico e mantém todos os outros desligados.
+* **Decodificador de Endereço (*Address Decoder*):** Decodificador de grande escala integrado em placas de memória (RAM/ROM) e barramentos da placa-mãe. A CPU envia o endereço de uma posição de memória em binário, e o decodificador lê essa informação e ativa eletricamente apenas aquela célula ou chip para leitura ou escrita.
+* **Decodificador BCD para 7 Segmentos (ex: CI 74LS47):** Decodificador especializado que traduz um número em código BCD de 4 bits (de $0000$ a $1001$, representando de 0 a 9) nas conexões elétricas necessárias para acionar um display de 7 segmentos. Muito utilizado em painéis numéricos e relógios digitais.
+* **Decodificador de Instruções (*Instruction Decoder*):** Circuito lógico localizado na Unidade de Controle (UC) do processador. Quando a CPU busca uma instrução na memória, este decodificador interpreta o código binário e configura os caminhos internos da CPU, ativando os blocos corretos (como a ULA) para executar a tarefa.
