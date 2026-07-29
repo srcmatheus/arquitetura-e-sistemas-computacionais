@@ -386,3 +386,150 @@ Principais Tipos de Decodificadores:
 * **Decodificador de Endereço (*Address Decoder*):** Decodificador de grande escala integrado em placas de memória (RAM/ROM) e barramentos da placa-mãe. A CPU envia o endereço de uma posição de memória em binário, e o decodificador lê essa informação e ativa eletricamente apenas aquela célula ou chip para leitura ou escrita.
 * **Decodificador BCD para 7 Segmentos (ex: CI 74LS47):** Decodificador especializado que traduz um número em código BCD de 4 bits (de $0000$ a $1001$, representando de 0 a 9) nas conexões elétricas necessárias para acionar um display de 7 segmentos. Muito utilizado em painéis numéricos e relógios digitais.
 * **Decodificador de Instruções (*Instruction Decoder*):** Circuito lógico localizado na Unidade de Controle (UC) do processador. Quando a CPU busca uma instrução na memória, este decodificador interpreta o código binário e configura os caminhos internos da CPU, ativando os blocos corretos (como a ULA) para executar a tarefa.
+
+---
+
+## Multiplexadores
+
+O multiplexador (também conhecido como MUX ou **Seletor de Dados**) é um circuito combinacional fundamental na eletrônica digital e nos sistemas computacionais. Diferente de um codificador, que gera um código binário a partir de uma entrada, o multiplexador funciona como uma chave seletora digital: ele recebe várias linhas de entrada de dados e, por meio de sinais de controle, encaminha o sinal de apenas uma delas para uma única saída.
+
+A especificação de um multiplexador ocorre principalmente pelo número de entradas de dados ($N$) e pela existência de uma única saída ($Y$). A relação entre o número de entradas de dados e a quantidade de linhas de seleção ($S$) segue uma potência de base 2, dada por $N = 2^S$, em que:
+
+* $N$: Número de entradas de dados;
+* $S$: Número de linhas de seleção (endereço);
+* $1$: Única linha de saída (geralmente identificada como $Y$ ou $Z$).
+
+Para entender melhor a função de um multiplexador, veja um exemplo prático:
+
+Em um computador, o processador possui um número limitado de pinos de entrada para receber dados, mas precisa interagir com diversas fontes ao mesmo tempo (como múltiplos registradores internos ou barramentos de periféricos). 
+
+O MUX resolve esse gargalo ao concentrar essas várias fontes em suas entradas e conectar sua única saída diretamente ao processador. Os dados chegam ao multiplexador e, sob o comando de um circuito de controle externo que altera os pinos de seleção ($S$) no momento exato, o MUX define qual dado tem a vez de ser transmitido à CPU.
+
+<img src="./imgs/mux.png" style="display: block; margin: 0 auto; width: 500px;">
+
+</br>
+
+**Tabela da verdade**
+
+<table style="width: 100%; max-width: 500px; text-align: center; border-collapse: collapse; margin: 20px auto; font-family: sans-serif;">
+  <thead>
+    <tr style="background-color: #707070; color: #ffffff;">
+      <th style="padding: 12px; border: 1px solid #888888;">S0</th>
+      <th style="padding: 12px; border: 1px solid #888888;">S1</th>
+      <th style="padding: 12px; border: 1px solid #888888;">Y</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background-color: white; color: #000;">
+      <td style="padding: 12px; border: 1px solid #888888;">0</td>
+      <td style="padding: 12px; border: 1px solid #888888;">0</td>
+      <td style="padding: 12px; border: 1px solid #888888;">A</td>
+    </tr>
+    <tr style="background-color: white; color: #000;">
+      <td style="padding: 12px; border: 1px solid #888888;">0</td>
+      <td style="padding: 12px; border: 1px solid #888888;">1</td>
+      <td style="padding: 12px; border: 1px solid #888888;">B</td>
+    </tr>
+    <tr style="background-color: white; color: #000;">
+      <td style="padding: 12px; border: 1px solid #888888;">1</td>
+      <td style="padding: 12px; border: 1px solid #888888;">0</td>
+      <td style="padding: 12px; border: 1px solid #888888;">C</td>
+    </tr>
+    <tr style="background-color: white; color: #000;">
+      <td style="padding: 12px; border: 1px solid #888888;">1</td>
+      <td style="padding: 12px; border: 1px solid #888888;">1</td>
+      <td style="padding: 12px; border: 1px solid #888888;">D</td>
+    </tr>
+  </tbody>
+</table>
+
+### Componentes de um Multiplexador
+
+* **Linhas de Dados ($D$):** Cada pino $D$ é um condutor físico que carrega um sinal elétrico (nível lógico `0` ou `1`) vindo de uma fonte específica.
+  * Um MUX de 4 para 1 possui 4 entradas de dados: $D_0, D_1, D_2, D_3$.
+  * Um MUX de 8 para 1 possui 8 entradas de dados: de $D_0$ a $D_7$.
+  * Todos os sinais chegam às entradas do MUX simultaneamente, mas apenas o sinal da entrada selecionada é repassado para a saída.
+* **Linhas de Seleção ($S$):** São os comandos de endereço que determinam qual entrada $D$ será copiada para a saída $Y$. As combinações binárias nesses pinos (por exemplo, `00`, `01`, `10` ou `11`) definem a rota do sinal.
+* **Pino de Habilitação (*Enable* / $EN$):** Além das linhas de dados e de seleção, a maioria dos multiplexadores possui uma entrada de controle geral. Se o chip não estiver habilitado ($EN$ inativo), a saída é desativada (geralmente entrando em estado de alta impedância ou nível lógico fixo), independentemente dos sinais presentes nas entradas de dados ou de seleção.
+
+Então, de maneira resumida, o MUX recebe múltiplos caminhos concorrentes e os serializa (transforma em uma fila de dados) para que possam passar por um canal único e estreito até o processador.
+
+---
+
+## Demultiplexadores (DEMUX)
+
+Agora que vimos como o Multiplexador (MUX) funciona, o Demultiplexador (DEMUX) entra como o seu par complementar. Se o MUX atua como um funil pegando várias entradas de dados e afunilando para uma única saída, o DEMUX faz o caminho oposto: ele pega um único sinal de entrada e o distribui para uma entre várias saídas possíveis.
+
+Sua lógica é o espelho do MUX. Em vez de $N$ entradas para $1$ saída, temos $1$ entrada de dados para $N$ saídas. A relação com os pinos de seleção ($S$) continua sendo a potência de dois: $N = 2^S$, onde:
+
+* $1$: Única entrada de dados (geralmente identificada como $D$ ou $In$).
+* $S$: Número de linhas de seleção (endereço).
+* $N$: Número de saídas de dados ($Y$).
+
+Para entender onde ele se encaixa, vamos voltar ao exemplo anterior:
+
+Imagine que o processador processou os dados e agora precisa enviar uma resposta para um dispositivo específico (como acender um segmento de tela, enviar um sinal para uma caixa de som ou ativar um pino em outro componente). Em vez de ter um fio dedicado saindo do processador para cada um desses destinos, o processador envia o dado por um único canal até o DEMUX. Ao mesmo tempo, ele altera os pinos de seleção para dizer ao DEMUX em qual das saídas aquele dado deve ser entregue.
+
+<img src="./imgs/demux.png" style="display: block; margin: 0 auto; width: 500px;">
+
+</br>
+
+**Tabela da verdade:**
+
+<table style="width: 100%; max-width: 500px; text-align: center; border-collapse: collapse; margin: 20px auto; font-family: sans-serif;">
+  <thead>
+    <tr style="background-color: #707070; color: #ffffff;">
+      <th style="padding: 12px; border: 1px solid #888888;">A</th>
+      <th style="padding: 12px; border: 1px solid #888888;">B</th>
+      <th style="padding: 12px; border: 1px solid #888888;">Y0</th>
+      <th style="padding: 12px; border: 1px solid #888888;">Y1</th>
+      <th style="padding: 12px; border: 1px solid #888888;">Y2</th>
+      <th style="padding: 12px; border: 1px solid #888888;">Y3</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background-color: white; color: #000;">
+      <td style="padding: 12px; border: 1px solid #888888;">0</td>
+      <td style="padding: 12px; border: 1px solid #888888;">0</td>
+      <td style="padding: 12px; border: 1px solid #888888; font-weight: bold;">Z</td>
+      <td style="padding: 12px; border: 1px solid #888888;">0</td>
+      <td style="padding: 12px; border: 1px solid #888888;">0</td>
+      <td style="padding: 12px; border: 1px solid #888888;">0</td>
+    </tr>
+    <tr style="background-color: white; color: #000;">
+      <td style="padding: 12px; border: 1px solid #888888;">0</td>
+      <td style="padding: 12px; border: 1px solid #888888;">1</td>
+      <td style="padding: 12px; border: 1px solid #888888;">0</td>
+      <td style="padding: 12px; border: 1px solid #888888; font-weight: bold;">Z</td>
+      <td style="padding: 12px; border: 1px solid #888888;">0</td>
+      <td style="padding: 12px; border: 1px solid #888888;">0</td>
+    </tr>
+    <tr style="background-color: white; color: #000;">
+      <td style="padding: 12px; border: 1px solid #888888;">1</td>
+      <td style="padding: 12px; border: 1px solid #888888;">0</td>
+      <td style="padding: 12px; border: 1px solid #888888;">0</td>
+      <td style="padding: 12px; border: 1px solid #888888;">0</td>
+      <td style="padding: 12px; border: 1px solid #888888; font-weight: bold;">Z</td>
+      <td style="padding: 12px; border: 1px solid #888888;">0</td>
+    </tr>
+    <tr style="background-color: white; color: #000;">
+      <td style="padding: 12px; border: 1px solid #888888;">1</td>
+      <td style="padding: 12px; border: 1px solid #888888;">1</td>
+      <td style="padding: 12px; border: 1px solid #888888;">0</td>
+      <td style="padding: 12px; border: 1px solid #888888;">0</td>
+      <td style="padding: 12px; border: 1px solid #888888;">0</td>
+      <td style="padding: 12px; border: 1px solid #888888; font-weight: bold;">Z</td>
+    </tr>
+  </tbody>
+</table>
+
+Na prática, a estrutura do chip funciona assim:
+
+* **Entrada de Dado ($D$):** É o pino único por onde chega o sinal elétrico (bits 0 ou 1) que precisa ser roteado.
+* **Saídas ($Y$):** São as rotas de destino disponíveis.
+  * Em um DEMUX 1 para 4, temos 1 entrada e 4 fios de saída: $Y_0, Y_1, Y_2, Y_3$.
+  * Em um DEMUX 1 para 8, temos 1 entrada e 8 fios de saída: $Y_0$ até $Y_7$.
+* **Linhas de Seleção ($S$):** Funcionam igualzinho no MUX. A combinação binária aplicada aqui (ex: `00`, `01`, `10`, `11`) define para qual das saídas $Y$ a entrada $D$ será copiada naquele instante.
+* **Enable (*Habilitação*):** Mantém a mesma função de chave geral. Se o pino *Enable* estiver desligado, todas as saídas permanecem inativas, independentemente do que estiver entrando na linha de dados ou nos pinos de seleção.
+
+Fechando a ideia dos dois circuitos: enquanto o MUX junta múltiplos caminhos em uma única via para economizar fios e pinos do processador, o DEMUX pega essa via única no final do trajeto e entrega o dado no destino correto.
