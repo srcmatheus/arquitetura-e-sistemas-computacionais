@@ -1,0 +1,22 @@
+## Processador
+
+CPU é a sigla para *Central Processing Unit* ou Unidade Central de Processamento. Trata-se do circuito integrado principal encarregado de orquestrar todas as operações de um sistema computacional. Essencialmente, é uma máquina sequencial de estados em hardware.
+
+A CPU é dividida em blocos funcionais que atuam em perfeita sincronia, como vimos anteriormente, mas o design de cada processador varia conforme a complexidade do conjunto de instruções e a especialização das cargas de trabalho. Vamos citar aqui as duas principais arquiteturas de processador e suas abordagens:
+
+- **CISC (*Complex Instruction Set Computer*):** como exemplo, temos os processadores Intel x86 e AMD64. São os processadores mais comuns para computadores. Seu principal objetivo é reduzir o número de instruções por programa, transferindo a complexidade para o hardware. Uma única instrução pode realizar operações de carga de memória, cálculo aritmético e escrita de volta (*write-back*).
+- **RISC (*Reduced Instruction Set Computer*):** são exemplos as arquiteturas ARM, RISC-V e MIPS. É focado em instruções simples, de tamanho fixo (geralmente 32 bits), executadas idealmente em um único ciclo de clock. Apenas instruções específicas acessam a memória (*Load/Store*), enquanto toda operação aritmética ocorre estritamente entre registradores.
+
+## Ciclo de busca, decodificação e execução
+
+O processador possui um ciclo que se repete continuamente, conhecido como Ciclo de Busca-Decodificação-Execução (*Fetch-Decode-Execute Cycle*), acionado pelo sinal de clock. Veja como funciona:
+
+- **Busca (*Fetch*):** A fase de busca inaugura o ciclo de instrução ao recuperar o próximo comando armazenado na memória principal ou na cache. Nesse momento, o endereço contido no *Program Counter* (PC) é transferido para o Registrador de Endereço de Memória (MAR). Em seguida, a Unidade de Controle emite um sinal elétrico de leitura através do barramento de controle. Assim que a instrução trafega pelo barramento de dados e chega ao Registrador de Dados (MDR), ela é imediatamente copiada para o Registrador de Instrução (IR), garantindo que o processador a tenha em mãos para análise. Paralelamente, o PC é incrementado para apontar para o endereço da instrução subsequente.
+
+- **Decodificação (*Decode*):** Com a instrução devidamente alocada no IR, o processador inicia o processo de interpretação. A Unidade de Controle fragmenta a sequência binária, isolando o código de operação (*opcode*) e os seus respectivos operandos. Essa análise permite que o hardware identifique a natureza da tarefa — seja ela matemática, lógica ou de desvio — e mapeie quais registradores fornecerão os dados de entrada. A partir dessa leitura, os circuitos internos são configurados e os sinais de controle engatilhados para acionar as unidades funcionais corretas.
+
+- **Execução (*Execute*):** Nesta etapa, o processamento físico efetivamente acontece. A Unidade Lógica e Aritmética (ULA) recebe os dados previamente mapeados e realiza os cálculos ou as operações booleanas exigidas pela instrução. Caso o comando represente uma alteração no fluxo de execução do programa, como em saltos condicionais ou incondicionais (*branches*), os circuitos de controle atualizam diretamente o *Program Counter* com o novo endereço de desvio, redirecionando o caminho do código.
+
+- **Acesso à Memória (*Memory*):** Embora nem toda instrução exija essa fase, ela é indispensável para operações de carga e armazenamento (*Load/Store*). Quando a execução demanda interagir diretamente com a RAM, o endereço físico calculado na etapa anterior é colocado no barramento. O processador, então, realiza a transferência necessária: ou busca um valor externo para trazê-lo aos registradores internos, ou descarrega o resultado do processamento em um endereço específico da memória principal.
+
+- **Escrita (*Write-back*):** O ciclo se encerra com a consolidação dos resultados no hardware. O valor numérico gerado pela ULA, ou a informação recém-recuperada da memória, é transferido através dos barramentos internos e salvo em seu destino definitivo dentro do banco de registradores de uso geral. Com a transição de estado da máquina concluída com sucesso, o processador finaliza a instrução atual e fica livre para iniciar a próxima busca.
